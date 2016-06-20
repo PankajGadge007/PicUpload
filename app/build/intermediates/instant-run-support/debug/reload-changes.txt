@@ -1,0 +1,3 @@
+CHANGED,C:\Users\pankaj\Desktop\Limra\PicUpload\app\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\picupload\MainActivity$override.class
+CHANGED,C:\Users\pankaj\Desktop\Limra\PicUpload\app\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\android\tools\fd\runtime\AppPatchesLoaderImpl.class
+CHANGED,C:\Users\pankaj\Desktop\Limra\PicUpload\app\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\example\picupload\MainActivity$UploadTask$override.class
