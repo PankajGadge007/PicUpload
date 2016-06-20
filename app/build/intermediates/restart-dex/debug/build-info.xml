@@ -4,26 +4,26 @@
     api-level="17"
     density="mdpi"
     format="7"
-    timestamp="346348272655920" >
+    timestamp="351973806256271" >
 
     <task
         name="javac"
-        duration="0" />
+        duration="283" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="187" />
+        duration="63" />
     <task
         name="verifier"
-        duration="15" />
+        duration="7" />
 
     <artifact
         location="C:\Users\pankaj\Desktop\Limra\PicUpload\app\build\outputs\apk\app-debug.apk"
         type="MAIN" />
 
-    <build timestamp="346348272655920" >
+    <build timestamp="351973806256271" >
         <artifact
             location="C:\Users\pankaj\Desktop\Limra\PicUpload\app\build\outputs\apk\app-debug.apk"
             type="MAIN" />

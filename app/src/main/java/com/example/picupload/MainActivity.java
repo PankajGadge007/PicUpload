@@ -31,11 +31,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends Activity implements OnClickListener {
+    private String uploadURL = "http://limratechnosys.in/houseclean/android/exupload.php";
     private Button mTakePhoto, btnUploadPic;
     private ImageView mImageView, mImageView2;
     private static final String TAG = "upload";
     private static int takePicCount = 1;
     Bitmap rotatedBMP;
+    Bitmap[] bitmaps = new Bitmap[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +87,7 @@ public class MainActivity extends Activity implements OnClickListener {
         dispatchTakePictureIntent();
     }
 
-    private void sendPhoto(Bitmap bitmap) throws Exception {
+    private void sendPhoto(Bitmap[] bitmap) throws Exception {
         new UploadTask().execute(bitmap);
     }
 
@@ -183,10 +185,12 @@ public class MainActivity extends Activity implements OnClickListener {
         switch (takePicCount) {
             case 1:
                 mImageView.setImageBitmap(rotatedBMP);
+                bitmaps[0] = rotatedBMP;
                 takePicCount = 2;
                 break;
             case 2:
                 mImageView2.setImageBitmap(rotatedBMP);
+                bitmaps[1] = rotatedBMP;
                 takePicCount = 404;
                 break;
             default:
@@ -224,7 +228,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
     public void up(View v) {
         try {
-            sendPhoto(rotatedBMP);
+            sendPhoto(bitmaps);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -236,41 +240,40 @@ public class MainActivity extends Activity implements OnClickListener {
             if (bitmaps[0] == null)
                 return null;
             setProgress(0);
+            for (Bitmap bitmap : bitmaps) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream); // convert Bitmap to ByteArrayOutputStream
+                InputStream in = new ByteArrayInputStream(stream.toByteArray()); // convert ByteArrayOutputStream to ByteArrayInputStream
 
-            Bitmap bitmap = bitmaps[0];
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream); // convert Bitmap to ByteArrayOutputStream
-            InputStream in = new ByteArrayInputStream(stream.toByteArray()); // convert ByteArrayOutputStream to ByteArrayInputStream
+                DefaultHttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost(uploadURL); // server
 
-            DefaultHttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost("http://limratechnosys.in/houseclean/android/exupload.php"); // server
+                MultipartEntity reqEntity = new MultipartEntity();
+                reqEntity.addPart("myFile", System.currentTimeMillis() + ".jpg", in);
+                httppost.setEntity(reqEntity);
 
-            MultipartEntity reqEntity = new MultipartEntity();
-            reqEntity.addPart("myFile", System.currentTimeMillis() + ".jpg", in);
-            httppost.setEntity(reqEntity);
+                Log.i(TAG, "request " + httppost.getRequestLine());
+                HttpResponse response = null;
+                try {
+                    response = httpclient.execute(httppost);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (response != null)
+                    Log.i(TAG, "response " + response.getStatusLine().toString());
 
-            Log.i(TAG, "request " + httppost.getRequestLine());
-            HttpResponse response = null;
-            try {
-                response = httpclient.execute(httppost);
-            } catch (IOException e) {
-                e.printStackTrace();
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            if (response != null)
-                Log.i(TAG, "response " + response.getStatusLine().toString());
-
-            try {
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                stream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
             return null;
         }
 
